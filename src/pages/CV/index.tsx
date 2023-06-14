@@ -8,7 +8,7 @@ import RequireAuth from "../../hooks/RequireAuth"
 
 function Main() {
   return (
-    <RequireAuth>
+    <>
       <div className="flex flex-col items-center mt-8 intro-y sm:flex-row">
         <h2 className="flex items-center mr-auto text-lg font-medium">
           Online CV
@@ -344,7 +344,7 @@ function Main() {
         </div>
         {/* END: Profile Side Menu */}
       </div>
-    </RequireAuth>
+    </>
   );
 }
 
