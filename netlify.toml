@@ -1,0 +1,8 @@
+[build]
+  command = "yarn build" # Replace with the appropriate build command for your project
+  publish = "dist" # Replace with the output directory of your React build
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
