@@ -4,9 +4,30 @@ import fakerData from "../../utils/faker";
 import _ from "lodash";
 import preview16Url from "../../assets/images/fakers/preview-16.jpg";
 import preview12Url from "../../assets/images/fakers/profile-12.jpg";
-import RequireAuth from "../../hooks/RequireAuth"
+import RequireAuth from "../../hooks/RequireAuth";
+import { useGetUserDataQuery, useGetWorkExperienceDescriptionsQuery } from "../../services/userApi";
+import { useEffect } from "react";
+import { useAppSelector } from "../../stores/hooks";
+import { Link } from "react-router-dom";
+import { DASHBOARD_URL } from "../../env";
 
 function Main() {
+  const { isFetching, data: userData } = useGetUserDataQuery(null);
+  const {  data: experience_descriptions } = useGetWorkExperienceDescriptionsQuery(null);
+  const { resume, skills, references, educations, work_experiences } =
+    userData || {};
+  const bearerToken = useAppSelector((state) => {
+    return state.user?.bearerToken;
+  });
+
+  useEffect(() => {
+    console.log("userData", userData);
+    console.log("experience_descriptions", experience_descriptions);
+    console.log("bearerToken", bearerToken);
+    if (userData) {
+    }
+  }, [userData, experience_descriptions]);
+
   return (
     <>
       <div className="flex flex-col items-center mt-8 intro-y sm:flex-row">
@@ -14,9 +35,11 @@ function Main() {
           Online CV
         </h2>
         <div className="flex w-full mt-4 sm:w-auto sm:mt-0">
+          <a href={`${DASHBOARD_URL}content-manager/collectionType/api::resume.resume`}>
           <Button variant="primary" className="mr-2 shadow-md">
             <Lucide icon="Pencil" className="w-4 h-4 mr-2" /> Update CV
           </Button>
+          </a>
           <Button variant="outline-secondary" className="shadow-md">
             <Lucide icon="Download" className="w-4 h-4 mr-2" /> Download CV
           </Button>
@@ -36,43 +59,39 @@ function Main() {
             <div className="flex flex-col items-center justify-center text-center 2xl:flex-row 2xl:text-left">
               <div className="z-20 -mt-20 2xl:-mt-10 2xl:ml-10">
                 <div className="w-40 h-40 overflow-hidden border-4 border-white rounded-full shadow-md image-fit">
-                  <img
-                    alt=""
-                    src={preview12Url}
-                  />
+                  <img alt="" src={userData?.profile_picture} />
                 </div>
               </div>
               <div className="2xl:ml-5">
                 <h2 className="mt-5 text-2xl font-medium">
-                  {fakerData[0].users[0].name}
+                  {`${userData?.first_name} ${userData?.last_name}`}
                 </h2>
                 <div className="flex items-center justify-center mt-2 text-slate-500 2xl:justify-start">
-                  <Lucide icon="Briefcase" className="w-4 h-4 mr-2" /> Frontend
-                  Engineer at True African
+                  <Lucide icon="Briefcase" className="w-4 h-4 mr-2" /> {resume?.current_position}
                 </div>
                 <div className="flex items-center justify-center mt-2 text-slate-500 2xl:justify-start">
-                  <Lucide icon="MapPin" className="w-4 h-4 mr-2" /> Kampala,
-                  UG
+                  <Lucide icon="MapPin" className="w-4 h-4 mr-2" />{" "}
+                  {userData?.location}
                 </div>
               </div>
-              <div className="grid h-20 grid-cols-2 px-10 mx-auto mt-5 mb-6 border-dashed gap-y-2 md:gap-y-0 gap-x-5 2xl:border-l 2xl:border-r border-slate-200 2xl:mb-0">
+              <div className="grid h-20 grid-cols-1 px-10 mx-auto mt-5 mb-6 border-dashed gap-y-2 md:gap-y-0 gap-x-5 2xl:border-l 2xl:border-r border-slate-200 2xl:mb-0">
                 <div className="flex items-center justify-center col-span-2 md:col-span-1 2xl:justify-start">
                   <Lucide icon="Mail" className="w-4 h-4 mr-2" />
-                  johnnydepp@trueafrican.com
+                  {userData?.email}
                 </div>
-                <div className="flex items-center justify-center col-span-2 md:col-span-1 2xl:justify-start">
-                  <Lucide icon="Instagram" className="w-4 h-4 mr-2" />{" "}
-                  @johnnydepp
-                </div>
-                <div className="flex items-center justify-center col-span-2 md:col-span-1 2xl:justify-start">
-                  <Lucide icon="Twitter" className="w-4 h-4 mr-2" /> Johnny Depp
-                </div>
-                <div className="flex items-center justify-center col-span-2 md:col-span-1 2xl:justify-start">
-                  <Lucide icon="Linkedin" className="w-4 h-4 mr-2" /> Johnny
-                  Depp
-                </div>
+                
+                {resume?.twitter_link && (
+                  <>
+                    <div className="flex items-center justify-center col-span-2 md:col-span-1 2xl:justify-start">
+                      <Lucide icon="Twitter" className="w-4 h-4 mr-2" />
+                    </div>
+                    <div className="flex items-center justify-center col-span-2 md:col-span-1 2xl:justify-start">
+                      <Lucide icon="Linkedin" className="w-4 h-4 mr-2" />{" "}
+                      {resume?.twitter_link}
+                    </div>
+                  </>
+                )}
               </div>
-              
             </div>
           </div>
         </div>
@@ -81,12 +100,13 @@ function Main() {
         <div className="col-span-12 xl:col-span-8">
           <div className="p-5 box intro-y">
             <div className="flex items-center pb-5 mb-5 border-b border-slate-200/60 dark:border-darkmode-400">
-              <div className="text-base font-medium truncate">Professional Summary</div>
+              <div className="text-base font-medium truncate">
+                Professional Summary
+              </div>
               <Lucide icon="Edit" className="w-4 h-4 ml-auto text-slate-500" />
             </div>
             <div className="leading-relaxed">
-              <p className="mt-5">{fakerData[0].news[0].content}</p>
-              <p className="mt-5">{fakerData[0].news[1].content}</p>
+              <p className="mt-5">{resume?.professional_summary}</p>
               <Button
                 variant="outline-secondary"
                 className="flex w-full mt-5 border-slate-200/60"
@@ -101,80 +121,48 @@ function Main() {
               <Lucide icon="Edit" className="w-4 h-4 ml-auto text-slate-500" />
             </div>
             <div>
-              <div className="flex pb-5 mb-5 border-b border-dashed border-slate-200 last:border-b-0 last:pb-0 last:mb-0">
+
+              {
+                work_experiences?.map((experience: any) => {
+                  return(
+                    <div key={experience?.publishedAt} className="flex pb-5 mb-5 border-b border-dashed border-slate-200 last:border-b-0 last:pb-0 last:mb-0">
                 <div className="mr-5">
                   <div className="flex items-center justify-center w-16 h-16 text-base font-medium rounded-full bg-slate-200 dark:bg-darkmode-400">
-                    SU
+                    {experience?.title?.substring(0,2).toUpperCase()}
                   </div>
                 </div>
                 <div>
-                  <div className="text-base font-medium">Left4code Express</div>
+                  <div className="text-base font-medium">{
+                    experience?.company
+                  }</div>
                   <div className="mt-1 text-slate-500">
-                    Senior Frontend Engineer
+                    {experience?.title}
                   </div>
-                  <div className="mt-1">2005 - 2009 • 4 yrs</div>
+                  <div className="mt-1">{`${experience?.start_date} - ${experience?.end_date}`}</div>
                   <ul className="mt-5 -ml-16 list-disc sm:mt-3 sm:ml-3">
-                    <li className="mb-1 last:mb-0">
-                      Work across the full stack, building highly scalable
-                      distributed solutions that enable positive user
-                      experiences and measurable business growth.
-                    </li>
-                    <li className="mb-1 last:mb-0">
-                      Develop new features and infrastructure development in
-                      support of rapidly emerging business and project
-                      requirements.
-                    </li>
-                    <li className="mb-1 last:mb-0">
-                      Assume leadership of new projects from conceptualization
-                      to deployment.
-                    </li>
-                    <li className="mb-1 last:mb-0">
-                      Ensure application performance, uptime, and scale,
-                      maintaining high standards of code quality and thoughtful
-                      application design.
-                    </li>
-                    <li className="mb-1 last:mb-0">
-                      Work with agile development methodologies, adhering to
-                      best practices and pursuing continued learning
-                      opportunities.
-                    </li>
+
+                    {
+                      experience_descriptions?.data?.filter((desc: any) => {
+                        return desc?.attributes?.work_experience?.data?.id == experience?.id
+                      }).map((desc: any) => {
+                        return (
+                          <li key={`${desc?.id}`} className="mb-1 last:mb-0">
+                          {desc?.attributes?.description}
+                        </li>
+                        );
+                      })
+                    }
+
+                    
                   </ul>
                 </div>
               </div>
-              <div className="flex pb-5 mb-5 border-b border-dashed border-slate-200 last:border-b-0 last:pb-0 last:mb-0">
-                <div className="mr-5">
-                  <div className="flex items-center justify-center w-16 h-16 text-base font-medium rounded-full bg-slate-200 dark:bg-darkmode-400">
-                    UO
-                  </div>
-                </div>
-                <div>
-                  <div className="text-base font-medium">Freelancer</div>
-                  <div className="mt-1 text-slate-500">Fullstack Engineer</div>
-                  <div className="mt-1">2010 - 2014 • 4 yrs</div>
-                  <ul className="mt-5 -ml-16 list-disc sm:mt-3 sm:ml-3">
-                    <li className="mb-1 last:mb-0">
-                      Participate in all aspects of agile software development
-                      including design, implementation, and deployment
-                    </li>
-                    <li className="mb-1 last:mb-0">
-                      Architect and provide guidance on building end-to-end
-                      systems optimized for speed and scale
-                    </li>
-                    <li className="mb-1 last:mb-0">
-                      Work primarily in Ruby, Java/JRuby, React, and JavaScript
-                    </li>
-                    <li className="mb-1 last:mb-0">
-                      Engage with inspiring designers and front end engineers,
-                      and collaborate with leading back end engineers as we
-                      create reliable APIs
-                    </li>
-                    <li className="mb-1 last:mb-0">
-                      Collaborate across time zones via Slack, GitHub comments,
-                      documents, and frequent video conferences
-                    </li>
-                  </ul>
-                </div>
-              </div>
+                  );
+                })
+              }
+
+
+              
             </div>
             <Button
               variant="outline-secondary"
@@ -189,57 +177,17 @@ function Main() {
               <Lucide icon="Edit" className="w-4 h-4 ml-auto text-slate-500" />
             </div>
             <div className="flex flex-wrap">
-              <div className="px-3 py-1 mb-2 mr-2 border rounded-full bg-primary/10 border-primary/10">
-                Ruby
-              </div>
-              <div className="px-3 py-1 mb-2 mr-2 border rounded-full bg-primary/10 border-primary/10">
-                Java/JRuby
-              </div>
-              <div className="px-3 py-1 mb-2 mr-2 border rounded-full bg-primary/10 border-primary/10">
-                React
-              </div>
-              <div className="px-3 py-1 mb-2 mr-2 border rounded-full bg-primary/10 border-primary/10">
-                JavaScript
-              </div>
-              <div className="px-3 py-1 mb-2 mr-2 border rounded-full bg-primary/10 border-primary/10">
-                Typescript
-              </div>
-              <div className="px-3 py-1 mb-2 mr-2 border rounded-full bg-primary/10 border-primary/10">
-                Bootstrap 5
-              </div>
-              <div className="px-3 py-1 mb-2 mr-2 border rounded-full bg-primary/10 border-primary/10">
-                TailwindCSS 3
-              </div>
-              <div className="px-3 py-1 mb-2 mr-2 border rounded-full bg-primary/10 border-primary/10">
-                Vuejs
-              </div>
-              <div className="px-3 py-1 mb-2 mr-2 border rounded-full bg-primary/10 border-primary/10">
-                Ruby
-              </div>
-              <div className="px-3 py-1 mb-2 mr-2 border rounded-full bg-primary/10 border-primary/10">
-                Java/JRuby
-              </div>
-              <div className="px-3 py-1 mb-2 mr-2 border rounded-full bg-primary/10 border-primary/10">
-                React
-              </div>
-              <div className="px-3 py-1 mb-2 mr-2 border rounded-full bg-primary/10 border-primary/10">
-                JavaScript
-              </div>
-              <div className="px-3 py-1 mb-2 mr-2 border rounded-full bg-primary/10 border-primary/10">
-                Typescript
-              </div>
-              <div className="px-3 py-1 mb-2 mr-2 border rounded-full bg-primary/10 border-primary/10">
-                Bootstrap 5
-              </div>
-              <div className="px-3 py-1 mb-2 mr-2 border rounded-full bg-primary/10 border-primary/10">
-                TailwindCSS 3
-              </div>
-              <div className="px-3 py-1 mb-2 mr-2 border rounded-full bg-primary/10 border-primary/10">
-                Vuejs
-              </div>
+              {
+                skills?.map((skill: any) => {
+                  return (
+                    <div key={skill?.id} className="px-3 py-1 mb-2 mr-2 border rounded-full bg-primary/10 border-primary/10">
+                      {skill?.skill_name}
+                    </div>
+                  );
+                })
+              }
             </div>
           </div>
-          
         </div>
         {/* END: Profile Content */}
         {/* BEGIN: Profile Side Menu */}
@@ -250,36 +198,29 @@ function Main() {
               <Lucide icon="Edit" className="w-4 h-4 ml-auto text-slate-500" />
             </div>
             <div>
-              <div className="flex pb-5 mb-5 border-b border-dashed border-slate-200 last:border-b-0 last:pb-0 last:mb-0">
+
+              {
+                educations?.map((educ: any) => {
+                  return(
+                    <div key={educ?.id} className="flex pb-5 mb-5 border-b border-dashed border-slate-200 last:border-b-0 last:pb-0 last:mb-0">
                 <div className="flex items-center justify-center w-16 h-16 text-base font-medium rounded-full bg-slate-200 dark:bg-darkmode-400">
-                  SU
+                  {educ?.institution?.substring(0,2).toUpperCase()}
                 </div>
                 <div className="ml-5">
                   <div className="text-base font-medium">
-                    Stanford University
+                    {educ?.institution}
                   </div>
                   <div className="mt-1 text-slate-500">
-                    Computer Science and Engineering
+                    {educ?.award}
                   </div>
-                  <div className="mt-1">2005 - 2009 • 4 yrs</div>
-                  <div className="mt-1">California, USA</div>
+                  <div className="mt-1">{`${new Date(educ?.start_date).getFullYear()} - ${new Date(educ?.end_date).getFullYear()}`}</div>
+                  <div className="mt-1">{educ?.location}</div>
                 </div>
               </div>
-              <div className="flex pb-5 mb-5 border-b border-dashed border-slate-200 last:border-b-0 last:pb-0 last:mb-0">
-                <div className="flex items-center justify-center w-16 h-16 text-base font-medium rounded-full bg-slate-200 dark:bg-darkmode-400">
-                  UO
-                </div>
-                <div className="ml-5">
-                  <div className="text-base font-medium">
-                    University of Oxford
-                  </div>
-                  <div className="mt-1 text-slate-500">
-                    Computer Science and Engineering
-                  </div>
-                  <div className="mt-1">2010 - 2014 • 4 yrs</div>
-                  <div className="mt-1">Oxford, England</div>
-                </div>
-              </div>
+                  );
+                })
+              }
+              
             </div>
             <Button
               variant="outline-secondary"
@@ -288,59 +229,7 @@ function Main() {
               <Lucide icon="ChevronDown" className="w-4 h-4 mr-2" /> View More
             </Button>
           </div>
-          <div className="p-5 mt-5 box intro-y">
-            <div className="flex items-center pb-5 mb-5 border-b border-slate-200/60 dark:border-darkmode-400">
-              <div className="text-base font-medium truncate">
-                References (3)
-              </div>
-            </div>
-            <div>
-              {_.take(fakerData, 3).map((faker, fakerKey) => (
-                <div
-                  key={fakerKey}
-                  className="flex items-center pb-5 mb-5 border-b border-dashed border-slate-200 last:border-b-0 last:pb-0 last:mb-0"
-                >
-                  <div>
-                    <div className="w-16 h-16 image-fit">
-                      <img
-                        alt="Rocketman - HTML Admin Template"
-                        className="rounded-full"
-                        src={faker.photos[0]}
-                      />
-                    </div>
-                  </div>
-                  <div className="flex flex-col w-full ml-5 2xl:items-center gap-y-3 2xl:flex-row">
-                    <div className="mr-auto">
-                      <div className="flex items-center text-base font-medium">
-                        <div className="whitespace-nowrap">
-                          {faker.users[0].name}
-                        </div>
-                        <div className="mx-1.5">•</div>
-                        <a href="" className="text-xs text-success">
-                          Follow
-                        </a>
-                      </div>
-                      <div className="mt-1 text-slate-500">
-                        {faker.users[0].username}
-                      </div>
-                    </div>
-                    <div className="flex">
-                      <Button variant="outline-secondary" className="px-2 py-1">
-                        <Lucide icon="UserCheck" className="w-4 h-4 mr-2" />{" "}
-                        Friends
-                      </Button>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-            <Button
-              variant="outline-secondary"
-              className="flex w-full mt-5 border-slate-200/60"
-            >
-              <Lucide icon="ChevronDown" className="w-4 h-4 mr-2" /> View More
-            </Button>
-          </div>
+          
         </div>
         {/* END: Profile Side Menu */}
       </div>

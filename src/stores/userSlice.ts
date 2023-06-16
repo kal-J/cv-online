@@ -3,6 +3,10 @@ import { RootState } from "./store";
 
 interface UserState {
   isAuthenticated: boolean;
+  data?: any,
+  bearerToken?: string,
+
+
 }
 
 const initialState: UserState = {
@@ -13,16 +17,18 @@ export const userSlice = createSlice({
   name: "user",
   initialState,
   reducers: {
-    updateUserState: (state, action: PayloadAction<Object>) => {
-      state = {
-        ...state,
-        ...action,
+    updateUserData: (state, action: PayloadAction<any>) => {
+      state.bearerToken = action.payload?.bearerToken
+      state.isAuthenticated = action.payload?.isAuthenticated
+      state.data = {
+        ...state.data,
+        ...action.payload?.data,
       };
     },
   },
 });
 
-export const { updateUserState } = userSlice.actions;
+export const { updateUserData } = userSlice.actions;
 
 export const isAuthenticated = (state: RootState) => {
   

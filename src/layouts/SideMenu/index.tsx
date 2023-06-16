@@ -163,16 +163,7 @@ function Main() {
         <div className="pt-4 mb-4">
           <div className={clsx(["flex items-center h-[33px]"])}>
             <Link to="/" className="flex items-center intro-x">
-              <img
-                alt="Rocketman Tailwind HTML Admin Template"
-                className={clsx([
-                  "w-[1.6rem]",
-                  simpleMenu.active &&
-                    "xl:ml-5 transition-all duration-200 ease-in-out",
-                ])}
-                src={logoUrl}
-                data-logo
-              />
+              
               <span
                 data-logo-text
                 className={clsx([
@@ -181,7 +172,7 @@ function Main() {
                     "xl:opacity-0 transition-opacity duration-200 ease-in-out",
                 ])}
               >
-                Waveform
+                CV Online
               </span>
             </Link>
             <a

@@ -1,4 +1,5 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { API_URL } from "../env";
 
 type User = {
   id: number;
@@ -9,20 +10,19 @@ type User = {
   blocked: boolean;
   createdAt: string;
   updatedAt: string;
-
 };
 
 export const userApi = createApi({
   reducerPath: "userApi",
   refetchOnFocus: true,
   baseQuery: fetchBaseQuery({
-    baseUrl: "http://localhost:1337/api/",
+    baseUrl: API_URL,
     prepareHeaders: (headers, { getState }: any) => {
-      const token = getState()?.user?.bearerToken
+      const token = getState()?.user?.bearerToken;
       if (token) {
-       // include token in req header
-        headers.set('authorization', `Bearer ${token}`)  
-        return headers
+        // include token in req header
+        headers.set("authorization", `Bearer ${token}`);
+        return headers;
       }
     },
   }),
@@ -30,24 +30,34 @@ export const userApi = createApi({
     getUsers: builder.query<User[], null>({
       query: () => "users",
     }),
-    getUserById: builder.query<User, { id: string }>({
-      query: ({ id }) => `users/${id}`,
+    getUserData: builder.query({
+      query: () => `/users/me?populate=*`,
     }),
+    getWorkExperienceDescriptions: builder.query({
+      query: () => `/experience-descriptions?populate=*`,
+    }),
+
     login: builder.mutation({
       query: (credentials) => ({
-        url: '/auth/local',
-        method: 'POST',
+        url: "/auth/local",
+        method: "POST",
         body: credentials,
       }),
     }),
     signup: builder.mutation({
       query: (data) => ({
-        url: '/auth/local/register',
-        method: 'POST',
+        url: "/auth-custom/register",
+        method: "POST",
         body: data,
       }),
     }),
   }),
 });
 
-export const { useGetUsersQuery, useGetUserByIdQuery, useLoginMutation, useSignupMutation } = userApi;
+export const {
+  useGetUsersQuery,
+  useGetWorkExperienceDescriptionsQuery,
+  useGetUserDataQuery,
+  useLoginMutation,
+  useSignupMutation,
+} = userApi;

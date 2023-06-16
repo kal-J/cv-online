@@ -5,33 +5,54 @@ import Button from "../../base-components/Button";
 import { FormInput, FormCheck } from "../../base-components/Form";
 import { Link, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { useLoginMutation } from "../../services/userApi";
+import { useGetUserDataQuery, useLoginMutation } from "../../services/userApi";
 import Loading from "../../components/Loading";
+import { useAppDispatch, useAppSelector } from "../../stores/hooks";
+import { updateUserData } from "../../stores/userSlice";
 
 function Main() {
-
   const navigate = useNavigate();
-  const [login, { isLoading, isError, error, isSuccess, data }] = useLoginMutation()
-  const [email, setEmail] = useState("")
-  const [password, setPassword] = useState("")
+  const dispatch = useAppDispatch();
+  const bearerToken = useAppSelector((state) => state.user?.bearerToken);
+  const isAuthenticated = useAppSelector((state) => state.user?.isAuthenticated);
+  const [login, { isLoading, isError, error, isSuccess, data: loginData }] =
+    useLoginMutation();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
   const handleLogin = async () => {
-     await login({
+    await login({
       identifier: email,
-      password: password
-    })
-
-  }
+      password: password,
+    });
+  };
 
   useEffect(() => {
-    console.log("Login Data Response => ", data)
-  }, [data])
+    let data = loginData;
+    console.log("Login Data Response => ", data);
+    if (data) {
+      dispatch(
+        updateUserData({
+          data: { ...data?.user },
+          bearerToken: data?.jwt,
+          isAuthenticated: true,
+        })
+      );
+    }
+  }, [loginData]);
+
+  useEffect(() => {
+    console.log("bearerToken => ", bearerToken);
+    console.log("isAuthenticated => ", isAuthenticated);
+    if (bearerToken && isAuthenticated) {
+      navigate("/cv");
+    }
+  }, [bearerToken, isAuthenticated]);
 
   return (
     <>
-    {isLoading && <Loading />}
+      {isLoading && <Loading />}
       <div className="container">
-        
         <div className="flex items-center justify-center w-full min-h-screen p-5 md:p-20">
           <div className="w-96 intro-y">
             {/* <img
@@ -49,7 +70,7 @@ function Main() {
                 placeholder="Email"
                 value={email}
                 onChange={(e) => {
-                  setEmail(e.target.value)
+                  setEmail(e.target.value);
                 }}
               />
               <FormInput
@@ -58,7 +79,7 @@ function Main() {
                 placeholder="Password"
                 value={password}
                 onChange={(e) => {
-                  setPassword(e.target.value)
+                  setPassword(e.target.value);
                 }}
               />
               <div className="flex mt-4 text-xs text-slate-500 sm:text-sm">
@@ -78,12 +99,18 @@ function Main() {
                 <Link to="/forgot-password">Forgot Password?</Link>
               </div>
               <div className="mt-5 text-center xl:mt-8 xl:text-left">
-                <Button variant="primary" className="w-full xl:mr-3" onClick={() => handleLogin()}>
+                <Button
+                  variant="primary"
+                  className="w-full xl:mr-3"
+                  onClick={() => handleLogin()}
+                >
                   Login
                 </Button>
-                <Button variant="outline-secondary" className="w-full mt-3" onClick={
-                  () => navigate("/signup")
-                }>
+                <Button
+                  variant="outline-secondary"
+                  className="w-full mt-3"
+                  onClick={() => navigate("/signup")}
+                >
                   Sign up
                 </Button>
               </div>

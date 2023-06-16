@@ -52,6 +52,7 @@ import ImageZoom from "../pages/ImageZoom";
 import Signup from "../pages/Signup";
 import CV from "../pages/CV";
 import Home from "../pages/Home";
+import CreateCV from "../pages/CreateCV";
 import RequireAuth from "../hooks/RequireAuth";
 
 function Router() {
@@ -69,6 +70,7 @@ function Router() {
       element: <Login />,
     },
     
+    
     {
       path: "/",
       element: <RequireAuth><Menu /></RequireAuth>,
@@ -77,10 +79,8 @@ function Router() {
           path: "/cv",
           element: <CV/>
         },
-        {
-          path: "/",
-          element: <DashboardOverview1 />,
-        },
+        
+        
         {
           path: "/dashboard-overview-2",
           element: <DashboardOverview2 />,

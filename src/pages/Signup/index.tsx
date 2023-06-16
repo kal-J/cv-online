@@ -3,23 +3,73 @@ import DarkModeSwitcher from "../../components/DarkModeSwitcher";
 import MainColorSwitcher from "../../components/MainColorSwitcher";
 import Button from "../../base-components/Button";
 import { FormInput, FormCheck } from "../../base-components/Form";
-import { Link } from "react-router-dom";
-import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import Notification from "../../base-components/Notification";
+import Lucide from "../../base-components/Lucide";
+import Toastify from "toastify-js";
+import { useSignupMutation } from "../../services/userApi";
+import Loading from "../../components/Loading";
+import { DASHBOARD_URL } from "../../env";
 
 function Main() {
-  const [first_name, setFirstName] = useState("")
-  const [last_name, setLastName] = useState("")
-  const [email, setEmail] = useState("")
-  const [password, setPassword] = useState("")
-  const [password_confirmation, setPasswordConfirmation] = useState("")
+  const navigate = useNavigate();
+  const [signup, { isLoading, isError, error, isSuccess, data: userData }] =
+    useSignupMutation();
+  const [first_name, setFirstName] = useState("");
+  const [last_name, setLastName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [password_confirmation, setPasswordConfirmation] = useState("");
+  const [registrationError, setRegistrationError] = useState("");
 
-  const handleSignup = () => {
-    // TODO
-  }
+  const handleSignup = async () => {
+    if (password != password_confirmation) {
+      setRegistrationError("Passwords do not match");
+      return;
+    }
+    await signup({
+      username: email,
+      email,
+      password,
+      first_name,
+      last_name
+    });
+
+    setRegistrationError("");
+    window.location.href = `${DASHBOARD_URL}content-manager/collectionType/plugin::users-permissions.user`
+    //navigate('/login');
+  };
+
+  useEffect(() => {
+    if (registrationError) {
+      const failedEl = document
+        .querySelectorAll("#failed-notification-content")[0]
+        .cloneNode(true) as HTMLElement;
+      failedEl.classList.remove("hidden");
+      Toastify({
+        node: failedEl,
+        duration: 3000,
+        newWindow: true,
+        close: true,
+        gravity: "top",
+        position: "right",
+        stopOnFocus: true,
+      }).showToast();
+    }
+  }, [registrationError]);
 
   return (
     <>
+    {isLoading && <Loading />}
       <div className="container">
+        <Notification id="failed-notification-content" className="flex hidden">
+          <Lucide icon="XCircle" className="text-danger" />
+          <div className="ml-4 mr-4">
+            <div className="font-medium">Registration failed!</div>
+            <div className="mt-1 text-slate-500">{registrationError}</div>
+          </div>
+        </Notification>
 
         <div className="flex items-center justify-center w-full min-h-screen p-5 md:p-20">
           <section className="bg-white">
@@ -63,7 +113,14 @@ function Main() {
                     </p>
                   </div>
 
-                  <form onSubmit={(e) => e.preventDefault()} action="#" className="mt-8 grid grid-cols-6 gap-6">
+                  <form
+                    onSubmit={(e) => {
+                      e.preventDefault();
+                      handleSignup();
+                    }}
+                    action="#"
+                    className="mt-8 grid grid-cols-6 gap-6"
+                  >
                     <div className="col-span-6 sm:col-span-3">
                       <label
                         htmlFor="FirstName"
@@ -74,6 +131,7 @@ function Main() {
 
                       <FormInput
                         type="text"
+                        required={true}
                         className="mt-1 w-full rounded-md   text-sm "
                         id="FirstName"
                         name="first_name"
@@ -96,6 +154,7 @@ function Main() {
                         id="LastName"
                         name="last_name"
                         value={last_name}
+                        required={true}
                         onChange={(e) => setLastName(e.target.value)}
                       />
                     </div>
@@ -114,6 +173,7 @@ function Main() {
                         id="Email"
                         name="email"
                         value={email}
+                        required={true}
                         onChange={(e) => setEmail(e.target.value)}
                       />
                     </div>
@@ -131,6 +191,7 @@ function Main() {
                         type="password"
                         id="password"
                         name="password"
+                        required={true}
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                       />
@@ -150,14 +211,19 @@ function Main() {
                         id="PasswordConfirmation"
                         name="password_confirmation"
                         value={password_confirmation}
-                        onChange={(e) => setPasswordConfirmation(e.target.value)}
+                        required={true}
+                        onChange={(e) =>
+                          setPasswordConfirmation(e.target.value)
+                        }
                       />
                     </div>
 
                     <div className="col-span-6 sm:flex sm:items-center sm:gap-4">
-                      <Button variant="primary" className="w-full" onClick={() => {
-                        handleSignup()
-                      }}>
+                      <Button
+                        variant="primary"
+                        className="w-full"
+                        type="submit"
+                      >
                         Create an account
                       </Button>
                     </div>
@@ -165,7 +231,6 @@ function Main() {
                       <p className="mt-4 text-sm text-gray-500 sm:mt-0">
                         Already have an account? &nbsp;
                         <Link to="/login">Log in</Link>
-                        
                       </p>
                     </div>
                   </form>
