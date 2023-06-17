@@ -124,8 +124,8 @@ function Main() {
 
   return (
     <div className="flex">
-      <DarkModeSwitcher />
-      <MainColorSwitcher />
+      {/* <DarkModeSwitcher />
+      <MainColorSwitcher /> */}
       {/* BEGIN: Side Menu */}
       <nav
         className={clsx([
