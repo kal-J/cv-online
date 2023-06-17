@@ -37,8 +37,8 @@ function Main() {
     });
 
     setRegistrationError("");
-    window.location.href = `${DASHBOARD_URL}content-manager/collectionType/plugin::users-permissions.user`
-    //navigate('/login');
+    // window.location.href = `${DASHBOARD_URL}content-manager/collectionType/plugin::users-permissions.user`
+    navigate('/login');
   };
 
   useEffect(() => {
