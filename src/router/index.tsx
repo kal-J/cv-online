@@ -76,7 +76,7 @@ function Router() {
       element: <RequireAuth><Menu /></RequireAuth>,
       children: [
         {
-          path: "/cv",
+          path: "/cv/:link_key",
           element: <CV/>
         },
         
