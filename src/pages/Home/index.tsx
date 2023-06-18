@@ -69,7 +69,7 @@ function Main() {
 
                 <Link
                   className="block w-full rounded border border-blue-600 px-12 py-3 text-sm font-medium text-white hover:bg-blue-600 focus:outline-none focus:ring active:bg-blue-500 sm:w-auto"
-                  to="/cv"
+                  to="/access-code"
                 >
                   Open CV
                 </Link>

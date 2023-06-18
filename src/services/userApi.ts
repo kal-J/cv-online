@@ -27,14 +27,17 @@ export const userApi = createApi({
     },
   }),
   endpoints: (builder) => ({
-    getUsers: builder.query<User[], null>({
-      query: () => "users",
+    getUsersData: builder.query({
+      query: () => `/users?populate=*`,
     }),
     getUserData: builder.query({
       query: () => `/users/me?populate=*`,
     }),
     getWorkExperienceDescriptions: builder.query({
       query: () => `/experience-descriptions?populate=*`,
+    }),
+    getResumes: builder.query({
+      query: () => `/resumes`,
     }),
 
     login: builder.mutation({
@@ -55,8 +58,9 @@ export const userApi = createApi({
 });
 
 export const {
-  useGetUsersQuery,
+  useGetUsersDataQuery,
   useGetWorkExperienceDescriptionsQuery,
+  useGetResumesQuery,
   useGetUserDataQuery,
   useLoginMutation,
   useSignupMutation,

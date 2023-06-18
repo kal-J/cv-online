@@ -54,6 +54,8 @@ import CV from "../pages/CV";
 import Home from "../pages/Home";
 import CreateCV from "../pages/CreateCV";
 import RequireAuth from "../hooks/RequireAuth";
+import AccessCode from "../pages/AccessCode";
+import CVAccessCode from "../pages/CVAccessCode";
 
 function Router() {
   const routes = [
@@ -69,6 +71,14 @@ function Router() {
       path: "/login",
       element: <Login />,
     },
+    {
+      path: "/access-code",
+      element: <AccessCode/>
+    },
+    {
+      path: "/access-code/cv",
+      element: <CVAccessCode/>
+    },
     
     
     {
@@ -79,7 +89,6 @@ function Router() {
           path: "/cv/:link_key",
           element: <CV/>
         },
-        
         
         {
           path: "/dashboard-overview-2",

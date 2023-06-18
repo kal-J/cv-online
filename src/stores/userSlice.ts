@@ -5,6 +5,7 @@ interface UserState {
   isAuthenticated: boolean;
   data?: any,
   bearerToken?: string,
+  cv_access_code?: string
 
 
 }
@@ -25,10 +26,14 @@ export const userSlice = createSlice({
         ...action.payload?.data,
       };
     },
+    setAccessCode: (state, action: PayloadAction<any>) => {
+      state.cv_access_code = action.payload?.cv_access_code
+      
+    },
   },
 });
 
-export const { updateUserData } = userSlice.actions;
+export const { updateUserData, setAccessCode } = userSlice.actions;
 
 export const isAuthenticated = (state: RootState) => {
   
