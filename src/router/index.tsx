@@ -89,7 +89,10 @@ function Router() {
           path: "/cv/:link_key",
           element: <CV/>
         },
-        
+        {
+          path: "/cv",
+          element: <CV/>
+        },
         {
           path: "/dashboard-overview-2",
           element: <DashboardOverview2 />,
