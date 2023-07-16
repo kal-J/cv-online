@@ -85,7 +85,7 @@ function Main() {
               </div>
               <div className="2xl:ml-5">
                 <h2 className="mt-5 text-2xl font-medium">
-                  {`${resume?.first_name} ${resume?.last_name}`}
+                  {`${resume?.first_name || '-'} ${resume?.last_name || '-'}`}
                 </h2>
                 <div className="flex items-center justify-center mt-2 text-slate-500 2xl:justify-start">
                   <Lucide icon="Briefcase" className="w-4 h-4 mr-2" />{" "}
