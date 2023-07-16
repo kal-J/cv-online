@@ -1,5 +1,6 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { API_URL } from "../env";
+import { useAppSelector } from "../stores/hooks";
 
 type User = {
   id: number;
@@ -36,8 +37,20 @@ export const userApi = createApi({
     getWorkExperienceDescriptions: builder.query({
       query: () => `/experience-descriptions?populate=*`,
     }),
+    getWorkExperiences: builder.query({
+      query: (admin_account_id) => `/work-experiences?filters[created_by_user_id][$eq]=${admin_account_id}`,
+    }),
     getResumes: builder.query({
-      query: () => `/resumes`,
+      query: (admin_account_id: number) => `/resumes?filters[created_by_user_id][$eq]=${admin_account_id}`,
+    }),
+    getSkills: builder.query({
+      query: (admin_account_id: number) => `/skills?filters[created_by_user_id][$eq]=${admin_account_id}`,
+    }),
+    getEducations: builder.query({
+      query: (admin_account_id: number) => `/educations?filters[created_by_user_id][$eq]=${admin_account_id}`,
+    }),
+    getReferences: builder.query({
+      query: (admin_account_id: number) => `/references?filters[created_by_user_id][$eq]=${admin_account_id}`,
     }),
 
     login: builder.mutation({
@@ -60,7 +73,11 @@ export const userApi = createApi({
 export const {
   useGetUsersDataQuery,
   useGetWorkExperienceDescriptionsQuery,
+  useGetWorkExperiencesQuery,
   useGetResumesQuery,
+  useGetSkillsQuery,
+  useGetEducationsQuery,
+  useGetReferencesQuery,
   useGetUserDataQuery,
   useLoginMutation,
   useSignupMutation,
