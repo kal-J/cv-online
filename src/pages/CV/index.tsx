@@ -11,7 +11,6 @@ import {
   useGetResumesQuery,
   useGetSkillsQuery,
   useGetUserDataQuery,
-  useGetWorkExperienceDescriptionsQuery,
   useGetWorkExperiencesQuery,
 } from "../../services/userApi";
 import { useEffect } from "react";

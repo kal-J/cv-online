@@ -34,9 +34,6 @@ export const userApi = createApi({
     getUserData: builder.query({
       query: () => `/users/me?populate=*`,
     }),
-    getWorkExperienceDescriptions: builder.query({
-      query: () => `/experience-descriptions?populate=*`,
-    }),
     getWorkExperiences: builder.query({
       query: (admin_account_id) => `/work-experiences?filters[created_by_user_id][$eq]=${admin_account_id}`,
     }),
@@ -72,7 +69,6 @@ export const userApi = createApi({
 
 export const {
   useGetUsersDataQuery,
-  useGetWorkExperienceDescriptionsQuery,
   useGetWorkExperiencesQuery,
   useGetResumesQuery,
   useGetSkillsQuery,
